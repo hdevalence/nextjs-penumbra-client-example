@@ -30,7 +30,7 @@ export default function Home() {
           <h3 className='text-lg font-bold'>Connected!</h3>
           <button
             type="button"
-            className='my-2 border rounded cursor-pointer border-gray-300 px-4 py-2 hover:bg-gray-800 transition'
+            className='mt-2 mb-4 border rounded cursor-pointer border-gray-300 px-4 py-2 hover:bg-gray-800 transition'
             onClick={onDisconnect}
           >
             Disconnect

@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import { PenumbraInjection } from '@penumbra-zone/client';
 import { assertGlobalPresent, assertProviderManifest, assertProvider } from '@penumbra-zone/client/create';
 import { fetchAddress, fetchBalances } from '@/app/fetchers';
 
@@ -83,24 +82,28 @@ export const useWalletManifests = () => {
   return { data: manifests, loading };
 };
 
-export const connectToWallet = async (origin: string) => {
-  const provider = await assertProviderManifest(origin);
+export const connectToWallet = (origin: string) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const provider = await assertProviderManifest(origin);
 
-  return new Promise((resolve, reject) => {
-    // Should use watchers and callbacks from the injection
-    const interval = setInterval(() => {
-      if (provider.isConnected()) {
+      // Should use watchers and callbacks from the injection
+      const interval = setInterval(() => {
+        if (provider.isConnected()) {
+          clearInterval(interval);
+          resolve(true);
+        }
+      }, 10);
+
+      setTimeout(() => {
         clearInterval(interval);
-        resolve(true);
-      }
-    }, 10);
+        reject(new Error('could not connect to the wallet'));
+      }, 15000);
 
-    setTimeout(() => {
-      clearInterval(interval);
-      reject(new Error('could not connect to the wallet'));
-    }, 15000);
-
-    provider.request();
+      provider.request();
+    } catch (error) {
+      reject(error);
+    }
   });
 };
 

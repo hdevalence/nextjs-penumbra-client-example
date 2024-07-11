@@ -8,7 +8,7 @@ import { getMetadataFromBalancesResponseOptional, getAmount } from '@penumbra-zo
 const createFetchClient = (wallet: string) => {
   const provider = assertProvider(wallet);
 
-  const getPort = () => provider.connect();
+  const getPort = () => provider.connect();``
 
   return createPromiseClient<typeof ViewService>(ViewService, createChannelTransport({
     jsonOptions,
@@ -27,9 +27,10 @@ export const fetchBalances = async (wallet: string, account: number): Promise<st
   const iterable = client.balances({ accountFilter: { account: account } });
   const balances = await Array.fromAsync(iterable);
   return balances.map((balance) => {
-    const metadataSymbol = getMetadataFromBalancesResponseOptional(balance)?.symbol;
+    const metadata = getMetadataFromBalancesResponseOptional(balance);
+    const metadataSymbol = metadata?.symbol;
     const amount = getAmount(balance);
-    if (metadataSymbol && amount) {
+    if (metadataSymbol && amount && metadata.priorityScore >= 40n) {
       const joinedAmount = (amount.hi << 64n) + amount.lo;
       return `${metadataSymbol}: ${joinedAmount}`;
     }

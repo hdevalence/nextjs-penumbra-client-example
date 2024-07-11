@@ -23,9 +23,6 @@ importers:
       '@connectrpc/connect':
         specifier: ^1.4.0
         version: 1.4.0(@bufbuild/protobuf@1.10.0)
-      '@connectrpc/connect-query':
-        specifier: ^1.4.1
-        version: 1.4.1(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0))(@tanstack/react-query@5.50.1(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@penumbra-zone/bech32m':
         specifier: ^6.1.1
         version: 6.1.1
@@ -44,9 +41,6 @@ importers:
       '@penumbra-zone/types':
         specifier: ^15.0.0
         version: 15.0.0(aku33ui5pr7hqvw5mjd4hoxe4u)
-      '@tanstack/react-query':
-        specifier: ^5.50.1
-        version: 5.50.1(react@18.3.1)
       next:
         specifier: 14.2.3
         version: 14.2.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -271,15 +265,6 @@ packages:
   '@bufbuild/protobuf@1.10.0':
     resolution: {integrity: sha512-QDdVFLoN93Zjg36NoQPZfsVH9tZew7wKDKyV5qRdj8ntT4wQCOradQjRaTdwMhWUYsgKsvCINKKm87FdEk96Ag==}
 
-  '@connectrpc/connect-query@1.4.1':
-    resolution: {integrity: sha512-kRv0ka+kSBpnG/56H/vLbQEHkcaFkVb2tZ4fo5m6V3AxKMFvrl35i2nO7+9cmPjhzzbTbE8W/zJqYZkO4YE+FA==}
-    peerDependencies:
-      '@bufbuild/protobuf': ^1.3.3
-      '@connectrpc/connect': ^1.1.2
-      '@tanstack/react-query': 5.x
-      react: ^18.3.1
-      react-dom: ^18.3.1
-
   '@connectrpc/connect@1.4.0':
     resolution: {integrity: sha512-vZeOkKaAjyV4+RH3+rJZIfDFJAfr+7fyYr6sLDKbYX3uuTVszhFe9/YKf5DNqrDb5cKdKVlYkGn6DTDqMitAnA==}
     peerDependencies:
@@ -461,14 +446,6 @@ packages:
 
   '@swc/helpers@0.5.5':
     resolution: {integrity: sha512-KGYxvIOXcceOAbEk4bi/dVLEK9z8sZ0uBB3Il5b1rhfClSpcX0yfRO0KmTkqR2cnQDymwLB+25ZyMzICg/cm/A==}
-
-  '@tanstack/query-core@5.50.1':
-    resolution: {integrity: sha512-lpfhKPrJlyV2DSVcQb/HuozH3Av3kws4ge22agx+lNGpFkS4vLZ7St0l3GLwlAD+bqB+qXGex3JdRKUNtMviEQ==}
-
-  '@tanstack/react-query@5.50.1':
-    resolution: {integrity: sha512-s0DW3rVBDPReDDovUjVqItVa3R2nPfUANK9nqGvarO2DwTiY9U4EBTsqizMxItRCoGgK5apeM7D3mxlHrSKpdQ==}
-    peerDependencies:
-      react: ^18.0.0
 
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
@@ -1613,9 +1590,6 @@ packages:
     resolution: {integrity: sha512-itJW8lvSA0TXEphiRoawsCksnlf8SyvmFzIhltqAHluXd88pkCd+cXJVHTDwdCr0IzwptSm035IHQktUu1QUMg==}
     engines: {node: '>=0.10.0'}
 
-  stable-hash@0.0.4:
-    resolution: {integrity: sha512-LjdcbuBeLcdETCrPn9i8AYAZ1eCtu4ECAWtP7UleOiZ9LzVxRzzUZEoZ8zB24nhkQnDWyET0I+3sWokSDS3E7g==}
-
   stop-iteration-iterator@1.0.0:
     resolution: {integrity: sha512-iCGQj+0l0HOdZ2AEeBADlsRC+vsnDsZsbdSiH1yNSjcfKM7fdpCMfqAL/dwF5BLiw/XhRft/Wax6zQbhq2BcjQ==}
     engines: {node: '>= 0.4'}
@@ -2070,15 +2044,6 @@ snapshots:
 
   '@bufbuild/protobuf@1.10.0': {}
 
-  '@connectrpc/connect-query@1.4.1(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0))(@tanstack/react-query@5.50.1(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
-    dependencies:
-      '@bufbuild/protobuf': 1.10.0
-      '@connectrpc/connect': 1.4.0(@bufbuild/protobuf@1.10.0)
-      '@tanstack/react-query': 5.50.1(react@18.3.1)
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-      stable-hash: 0.0.4
-
   '@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0)':
     dependencies:
       '@bufbuild/protobuf': 1.10.0
@@ -2241,13 +2206,6 @@ snapshots:
     dependencies:
       '@swc/counter': 0.1.3
       tslib: 2.6.3
-
-  '@tanstack/query-core@5.50.1': {}
-
-  '@tanstack/react-query@5.50.1(react@18.3.1)':
-    dependencies:
-      '@tanstack/query-core': 5.50.1
-      react: 18.3.1
 
   '@types/json5@0.0.29': {}
 
@@ -3612,8 +3570,6 @@ snapshots:
   slash@3.0.0: {}
 
   source-map-js@1.2.0: {}
-
-  stable-hash@0.0.4: {}
 
   stop-iteration-iterator@1.0.0:
     dependencies:
