@@ -2,6 +2,7 @@ import { ViewService } from '@penumbra-zone/protobuf';
 import { createPenumbraClient } from '@penumbra-zone/client/create';
 import { bech32mAddress } from '@penumbra-zone/bech32m/penumbra';
 import { getMetadataFromBalancesResponseOptional, getAmount } from '@penumbra-zone/getters/balances-response';
+import { useCallback, useEffect, useState } from 'react';
 
 const createFetchClient = (wallet: string) => {
   return createPenumbraClient<typeof ViewService>(ViewService, wallet);
@@ -11,6 +12,11 @@ export const fetchAddress = async (wallet: string, account: number): Promise<str
   const client = await createFetchClient(wallet);
   const res = await client.addressByIndex({ addressIndex: { account } });
   return res?.address && bech32mAddress(res.address);
+};
+
+// TODO: use the function from the types package – rn has an error in Next.js
+const joinLoHi = (lo = 0n, hi = 0n): bigint => {
+  return (hi << 64n) + lo;
 };
 
 export const fetchBalances = async (wallet: string, account: number): Promise<string[]> => {
@@ -23,11 +29,31 @@ export const fetchBalances = async (wallet: string, account: number): Promise<st
     const metadataSymbol = metadata?.symbol;
     const amount = getAmount(balance);
 
-    // Filter out assets with low priority score and leave only native and registered assets
-    if (metadataSymbol && amount && metadata.priorityScore >= 40n) {
-      const joinedAmount = (amount.hi << 64n) + amount.lo;
+    if (metadataSymbol && amount) {
+      const joinedAmount = joinLoHi(amount.lo, amount.hi).toString();
       return `${metadataSymbol}: ${joinedAmount}`;
     }
     return '';
-  });
+  }).filter(Boolean);
+};
+
+export const useInfo = (connectedWallet?: string) => {
+  const [address, setAddress] = useState<string>();
+  const [balances, setBalances] = useState<string[]>([]);
+
+  const fetchInfo = useCallback(async () => {
+    if (!connectedWallet) {
+      setAddress(undefined);
+      setBalances([]);
+    } else {
+      setAddress(await fetchAddress(connectedWallet, 0));
+      setBalances(await fetchBalances(connectedWallet, 0));
+    }
+  }, [connectedWallet, setAddress]);
+
+  useEffect(() => {
+    fetchInfo();
+  }, [connectedWallet, fetchInfo]);
+
+  return { address, balances };
 };

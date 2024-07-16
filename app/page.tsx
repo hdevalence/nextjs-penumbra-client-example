@@ -1,9 +1,11 @@
 'use client';
 import { useConnect, useWalletManifests } from '@/app/wrappers';
+import { useInfo } from '@/app/fetchers';
 
 export default function Home() {
   const { data: wallets, loading } = useWalletManifests();
-  const { address, balances, connectionLoading, connected, onConnect, onDisconnect } = useConnect();
+  const { connectionLoading, connected, onConnect, onDisconnect } = useConnect();
+  const { address, balances } = useInfo(connected);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">

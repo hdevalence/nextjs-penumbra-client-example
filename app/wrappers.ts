@@ -1,7 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { assertGlobalPresent, assertProvider, assertProviderManifest } from '@penumbra-zone/client/assert';
-import { type PenumbraManifest, isPenumbraManifest } from '@penumbra-zone/client/manifest';
-import { fetchAddress, fetchBalances } from '@/app/fetchers';
+import { type PenumbraManifest } from '@penumbra-zone/client/manifest';
 
 // Retrieve injected wallet origins
 export const getWallets = () => {
@@ -80,9 +79,6 @@ export const useConnect = () => {
   const [connectionLoading, setConnectionLoading] = useState<boolean>(false);
   const [connected, setConnected] = useState<string>();
 
-  const [address, setAddress] = useState<string>();
-  const [balances, setBalances] = useState<string[]>([]);
-
   // Finds already connected wallet
   const reconnectToWallet = async () => {
     const wallets = getWallets();
@@ -126,25 +122,9 @@ export const useConnect = () => {
     }
   };
 
-  const fetchInfo = useCallback(async () => {
-    if (!connected) {
-      setAddress(undefined);
-      setBalances([]);
-    } else {
-      setAddress(await fetchAddress(connected, 0));
-      setBalances(await fetchBalances(connected, 0));
-    }
-  }, [connected, setAddress]);
-
-  useEffect(() => {
-    fetchInfo();
-  }, [connected, fetchInfo]);
-
   return {
     connectionLoading,
     connected,
-    address,
-    balances,
     onConnect,
     onDisconnect,
   }
