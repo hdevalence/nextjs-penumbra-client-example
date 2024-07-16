@@ -11,15 +11,15 @@ export default function Home() {
 
       {!loading && !connected && (
         <ul>
-          {wallets.map((wallet) => (
+          {Object.entries(wallets).map(([origin, manifest]) => (
             <button
               type="button"
-              key={wallet.origin}
+              key={origin}
               disabled={connectionLoading}
               className='border rounded cursor-pointer border-gray-300 px-4 py-2 hover:bg-gray-800 transition'
-              onClick={() => onConnect(wallet.origin)}
+              onClick={() => onConnect(origin)}
             >
-              {connectionLoading ? 'Connecting...' : `Connect to ${wallet.name}`}
+              {connectionLoading ? 'Connecting...' : `Connect to ${manifest.name}`}
             </button>
           ))}
         </ul>
@@ -36,7 +36,7 @@ export default function Home() {
             Disconnect
           </button>
 
-          <p className='mb-4'>Your address is {address}</p>
+          <p className='mb-4 break-all'>Your address is {address}</p>
           <p>Balances</p>
           <ul>
             {balances.map((balance, index) => (

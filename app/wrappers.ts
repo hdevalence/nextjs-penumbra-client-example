@@ -1,82 +1,51 @@
 import { useCallback, useEffect, useState } from 'react';
-import { assertGlobalPresent, assertProviderManifest, assertProvider } from '@penumbra-zone/client/create';
+import { assertGlobalPresent, assertProvider, assertProviderManifest } from '@penumbra-zone/client/assert';
+import { type PenumbraManifest, isPenumbraManifest } from '@penumbra-zone/client/manifest';
 import { fetchAddress, fetchBalances } from '@/app/fetchers';
 
-// This is not exported from Penumbra-zone or Prax
-interface ExtensionManifest {
-  id: string;
-  name: string;
-  version: string;
-  description: string;
-  icons: Record<'16' | '32' | '48' | '128' | string, string>;
-  options_ui?: {
-    page: string;
-  };
-  options_page?: string;
-  homepage_url: string;
-  manifest_version: number;
-  key: string;
-  minimum_chrome_version: string;
-  action: unknown;
-  content_scripts: unknown[];
-  background: unknown;
-  web_accessible_resources: unknown[];
-  permissions: string[];
-  host_permissions: string[];
-  externally_connectable: unknown;
-  content_security_policy: unknown;
-}
-
-interface WalletManifest extends ExtensionManifest {
-  origin: string;
-}
-
-// A proposal function for @penumbra-zone/client
+// Retrieve injected wallet origins
 export const getWallets = () => {
   const injection = assertGlobalPresent();
   return Object.keys(injection);
 };
 
+type PenumbraManifests = Record<string, PenumbraManifest>
 
-// A proposal function for @penumbra-zone/react
-export const useWallets = () => {
-  const [wallets, setWallets] = useState<string[]>([]);
+// Send requests to the wallet origin (browser extension URL) and retrieve the manifest
+const fetchManifests = async (): Promise<PenumbraManifests> => {
+  const wallets = getWallets();
 
-  useEffect(() => {
-    setWallets(getWallets());
-  }, []);
+  const manifests: PenumbraManifests = {};
+  await Promise.all(wallets.map(async (origin) => {
+    try {
+      const manifest = await assertProviderManifest(origin) as PenumbraManifest;
 
-  return wallets;
-};
+      // Filter out non-penumbra manifests
+      if (isPenumbraManifest(manifest)) {
+        manifests[origin] = manifest;
+      }
+    } catch (_) {
+      return;
+    }
+  }));
 
-// Right now, we can't fetch manifests from @penumbra-zone/client, especially with types
-const fetchManifest = async (wallet: string): Promise<WalletManifest | undefined> => {
-  try {
-    const provider = assertProvider(wallet);
-    const req = await fetch(provider.manifest);
-    const manifest: ExtensionManifest = await req.json();
-    return { ...manifest, origin: wallet };
-  } catch (_) {
-    return undefined;
-  }
+  return manifests;
+
 };
 
 // Common react api for fetching wallet data to render the list of injected wallets
 export const useWalletManifests = () => {
-  const [manifests, setManifests] = useState<WalletManifest[]>([]);
+  const [manifests, setManifests] = useState<PenumbraManifests>({});
   const [loading, setLoading] = useState<boolean>(false);
 
-  const fetchManifests = async () => {
+  const loadManifests = async () => {
     setLoading(true);
-    const wallets = getWallets();
-    const res = await Promise.all(wallets.map(fetchManifest));
-    const manifests = res.filter(Boolean) as WalletManifest[];
-    setManifests(manifests);
+    setManifests(await fetchManifests());
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchManifests();
+    loadManifests();
   }, []);
 
   return { data: manifests, loading };
@@ -85,7 +54,7 @@ export const useWalletManifests = () => {
 export const connectToWallet = (origin: string) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const provider = await assertProviderManifest(origin);
+      const provider = await assertProvider(origin);
 
       // Should use watchers and callbacks from the injection
       const interval = setInterval(() => {
@@ -114,20 +83,24 @@ export const useConnect = () => {
   const [address, setAddress] = useState<string>();
   const [balances, setBalances] = useState<string[]>([]);
 
+  // Finds already connected wallet
+  const reconnectToWallet = async () => {
+    const wallets = getWallets();
+
+    const provider = await Promise.race(wallets.map(async (wallet) => {
+      try {
+        const provider = await assertProvider(wallet);
+        return provider.isConnected() ? provider : undefined;
+      } catch (_) {
+        return undefined;
+      }
+    }));
+    setConnected(provider?.manifest);
+  };
+
   // Auto connect to the wallet on page load
   useEffect(() => {
-    const wallets = getWallets();
-    const provider = wallets.find((wallet) => {
-      try {
-        const provider = assertProvider(wallet);
-        return !!provider.isConnected();
-      } catch (_) {
-        return false;
-      }
-    });
-    if (provider) {
-      setConnected(provider);
-    }
+    reconnectToWallet();
   }, []);
 
   const onConnect = async (origin: string) => {
@@ -145,7 +118,7 @@ export const useConnect = () => {
   const onDisconnect = async () => {
     if (!connected) return;
     try {
-      const provider = assertProvider(connected);
+      const provider = await assertProvider(connected);
       provider.disconnect;
       setConnected(undefined);
     } catch (error) {
