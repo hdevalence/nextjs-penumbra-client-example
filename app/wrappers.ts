@@ -20,8 +20,9 @@ const fetchManifests = async (): Promise<PenumbraManifests> => {
     try {
       const manifest = await assertProviderManifest(origin) as PenumbraManifest;
 
-      // Filter out non-penumbra manifests
-      if (isPenumbraManifest(manifest)) {
+      // TODO: Filter out non-penumbra manifests
+      // if (isPenumbraManifest(manifest)) {
+      if (manifest) {
         manifests[origin] = manifest;
       }
     } catch (_) {
@@ -30,13 +31,12 @@ const fetchManifests = async (): Promise<PenumbraManifests> => {
   }));
 
   return manifests;
-
 };
 
 // Common react api for fetching wallet data to render the list of injected wallets
 export const useWalletManifests = () => {
   const [manifests, setManifests] = useState<PenumbraManifests>({});
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const loadManifests = async () => {
     setLoading(true);
@@ -87,15 +87,15 @@ export const useConnect = () => {
   const reconnectToWallet = async () => {
     const wallets = getWallets();
 
-    const provider = await Promise.race(wallets.map(async (wallet) => {
+    const origin = await Promise.race(wallets.map(async (wallet) => {
       try {
         const provider = await assertProvider(wallet);
-        return provider.isConnected() ? provider : undefined;
+        return provider.isConnected() ? wallet : undefined;
       } catch (_) {
         return undefined;
       }
     }));
-    setConnected(provider?.manifest);
+    setConnected(origin);
   };
 
   // Auto connect to the wallet on page load

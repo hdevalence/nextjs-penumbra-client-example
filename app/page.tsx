@@ -10,7 +10,16 @@ export default function Home() {
       {loading && <p>Wallets loading...</p>}
 
       {!loading && !connected && (
-        <ul>
+        <ul className='flex flex-col gap-2'>
+          {!Object.keys(wallets).length && (
+            <p>
+              No injected wallets found. Try{' '}
+              <a className='underline' href='https://chromewebstore.google.com/detail/prax-wallet/lkpmkhpnhknhmibgnmmhdhgdilepfghe' target='_blank'>
+                installing Prax
+              </a>
+            </p>
+          )}
+
           {Object.entries(wallets).map(([origin, manifest]) => (
             <button
               type="button"

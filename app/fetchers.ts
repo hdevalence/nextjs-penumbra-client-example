@@ -17,10 +17,13 @@ export const fetchBalances = async (wallet: string, account: number): Promise<st
   const client = await createFetchClient(wallet);
   const iterable = client.balances({ accountFilter: { account: account } });
   const balances = await Array.fromAsync(iterable);
+
   return balances.map((balance) => {
     const metadata = getMetadataFromBalancesResponseOptional(balance);
     const metadataSymbol = metadata?.symbol;
     const amount = getAmount(balance);
+
+    // Filter out assets with low priority score and leave only native and registered assets
     if (metadataSymbol && amount && metadata.priorityScore >= 40n) {
       const joinedAmount = (amount.hi << 64n) + amount.lo;
       return `${metadataSymbol}: ${joinedAmount}`;
