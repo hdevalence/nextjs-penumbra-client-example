@@ -1,6 +1,7 @@
 import { ViewService } from '@penumbra-zone/protobuf';
 import { createPenumbraClient } from '@penumbra-zone/client/create';
 import { bech32mAddress } from '@penumbra-zone/bech32m/penumbra';
+import { joinLoHiAmount } from '@penumbra-zone/types/amount';
 import { getMetadataFromBalancesResponseOptional, getAmount } from '@penumbra-zone/getters/balances-response';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -14,11 +15,6 @@ export const fetchAddress = async (wallet: string, account: number): Promise<str
   return res?.address && bech32mAddress(res.address);
 };
 
-// TODO: use the function from the types package – rn has an error in Next.js
-const joinLoHi = (lo = 0n, hi = 0n): bigint => {
-  return (hi << 64n) + lo;
-};
-
 export const fetchBalances = async (wallet: string, account: number): Promise<string[]> => {
   const client = await createFetchClient(wallet);
   const iterable = client.balances({ accountFilter: { account: account } });
@@ -30,7 +26,7 @@ export const fetchBalances = async (wallet: string, account: number): Promise<st
     const amount = getAmount(balance);
 
     if (metadataSymbol && amount) {
-      const joinedAmount = joinLoHi(amount.lo, amount.hi).toString();
+      const joinedAmount = joinLoHiAmount(amount).toString();
       return `${metadataSymbol}: ${joinedAmount}`;
     }
     return '';

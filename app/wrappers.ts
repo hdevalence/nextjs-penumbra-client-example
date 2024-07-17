@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
+import { PenumbraState } from '@penumbra-zone/client';
 import { assertGlobalPresent, assertProvider, assertProviderManifest } from '@penumbra-zone/client/assert';
-import { type PenumbraManifest } from '@penumbra-zone/client/manifest';
+import { isPenumbraManifest, type PenumbraManifest } from '@penumbra-zone/client/manifest';
 
 // Retrieve injected wallet origins
 export const getWallets = () => {
@@ -19,9 +20,7 @@ const fetchManifests = async (): Promise<PenumbraManifests> => {
     try {
       const manifest = await assertProviderManifest(origin) as PenumbraManifest;
 
-      // TODO: Filter out non-penumbra manifests
-      // if (isPenumbraManifest(manifest)) {
-      if (manifest) {
+      if (isPenumbraManifest(manifest)) {
         manifests[origin] = manifest;
       }
     } catch (_) {
@@ -55,19 +54,19 @@ export const connectToWallet = (origin: string) => {
     try {
       const provider = await assertProvider(origin);
 
-      // Should use watchers and callbacks from the injection
-      const interval = setInterval(() => {
-        if (provider.isConnected()) {
-          clearInterval(interval);
+      const onStateChange: EventListener = (event) => {
+        const typedEvent = event as CustomEvent<{ origin: string, state: PenumbraState }>;
+        if (typedEvent.detail.state === PenumbraState.Connected || typedEvent.detail.state === PenumbraState.Requested) {
           resolve(true);
+          provider.removeEventListener('penumbrastate', onStateChange);
         }
-      }, 10);
+        if (typedEvent.detail.state === PenumbraState.Disconnected || typedEvent.detail.state === PenumbraState.Failed) {
+          reject(new Error('could not connect to the wallet'));
+          provider.removeEventListener('penumbrastate', onStateChange);
+        }
+      };
 
-      setTimeout(() => {
-        clearInterval(interval);
-        reject(new Error('could not connect to the wallet'));
-      }, 15000);
-
+      provider.addEventListener('penumbrastate', onStateChange);
       provider.request();
     } catch (error) {
       reject(error);
