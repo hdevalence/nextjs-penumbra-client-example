@@ -6,14 +6,14 @@ import { joinLoHiAmount } from '@penumbra-zone/types/amount';
 import { getMetadataFromBalancesResponseOptional, getAmount } from '@penumbra-zone/getters/balances-response';
 import { client } from './penumbra';
 
+const viewService = createServiceClient(client, ViewService);
+
 export const fetchAddress = async (account: number): Promise<string | undefined> => {
-  const viewService = createServiceClient(client, ViewService);
   const res = await viewService.addressByIndex({ addressIndex: { account } });
   return res?.address && bech32mAddress(res.address);
 };
 
 export const fetchBalances = async (account: number): Promise<string[]> => {
-  const viewService = createServiceClient(client, ViewService);
   const iterable = viewService.balances({ accountFilter: { account: account } });
   const balances = await Array.fromAsync(iterable);
 
