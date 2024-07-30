@@ -1,23 +1,20 @@
+import { useCallback, useEffect, useState } from 'react';
 import { ViewService } from '@penumbra-zone/protobuf';
-import { createPenumbraClient } from '@penumbra-zone/client/create';
+import { createServiceClient } from '@penumbra-zone/client';
 import { bech32mAddress } from '@penumbra-zone/bech32m/penumbra';
 import { joinLoHiAmount } from '@penumbra-zone/types/amount';
 import { getMetadataFromBalancesResponseOptional, getAmount } from '@penumbra-zone/getters/balances-response';
-import { useCallback, useEffect, useState } from 'react';
+import { client } from './penumbra';
 
-const createFetchClient = (wallet: string) => {
-  return createPenumbraClient<typeof ViewService>(ViewService, wallet);
-};
-
-export const fetchAddress = async (wallet: string, account: number): Promise<string | undefined> => {
-  const client = await createFetchClient(wallet);
-  const res = await client.addressByIndex({ addressIndex: { account } });
+export const fetchAddress = async (account: number): Promise<string | undefined> => {
+  const viewService = createServiceClient(client, ViewService);
+  const res = await viewService.addressByIndex({ addressIndex: { account } });
   return res?.address && bech32mAddress(res.address);
 };
 
-export const fetchBalances = async (wallet: string, account: number): Promise<string[]> => {
-  const client = await createFetchClient(wallet);
-  const iterable = client.balances({ accountFilter: { account: account } });
+export const fetchBalances = async (account: number): Promise<string[]> => {
+  const viewService = createServiceClient(client, ViewService);
+  const iterable = viewService.balances({ accountFilter: { account: account } });
   const balances = await Array.fromAsync(iterable);
 
   return balances.map((balance) => {
@@ -42,8 +39,8 @@ export const useInfo = (connectedWallet?: string) => {
       setAddress(undefined);
       setBalances([]);
     } else {
-      setAddress(await fetchAddress(connectedWallet, 0));
-      setBalances(await fetchBalances(connectedWallet, 0));
+      setAddress(await fetchAddress(0));
+      setBalances(await fetchBalances(0));
     }
   }, [connectedWallet, setAddress]);
 
