@@ -1,12 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ViewService } from '@penumbra-zone/protobuf';
-import { createServiceClient } from '@penumbra-zone/client';
 import { bech32mAddress } from '@penumbra-zone/bech32m/penumbra';
 import { joinLoHiAmount } from '@penumbra-zone/types/amount';
 import { getMetadataFromBalancesResponseOptional, getAmount } from '@penumbra-zone/getters/balances-response';
 import { client } from './penumbra';
 
-const viewService = createServiceClient(client, ViewService);
+const viewService = client.service(ViewService);
 
 export const fetchAddress = async (account: number): Promise<string | undefined> => {
   const res = await viewService.addressByIndex({ addressIndex: { account } });
