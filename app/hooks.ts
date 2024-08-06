@@ -49,7 +49,6 @@ export const useConnect = () => {
     try {
       setConnectionLoading(true);
       await client.connect(origin);
-      setConnected(origin);
     } catch (error) {
       if (error instanceof Error && error.cause) {
         if (error.cause === PenumbraRequestFailure.Denied) {
@@ -68,8 +67,6 @@ export const useConnect = () => {
     if (!client.isConnected()) return;
     try {
       await client.disconnect();
-      setConnected(undefined);
-      window.location.reload();
     } catch (error) {
       console.error(error);
     }
