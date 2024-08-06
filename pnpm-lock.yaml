@@ -27,8 +27,8 @@ importers:
         specifier: ^6.1.1
         version: 6.1.1
       '@penumbra-zone/client':
-        specifier: file:../web/packages/client/penumbra-zone-client-14.0.0.tgz
-        version: file:../web/packages/client/penumbra-zone-client-14.0.0.tgz(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0))(@penumbra-zone/protobuf@5.4.0(@buf/cosmos_ibc.bufbuild_es@1.10.0-20240703151202-d7191877c701.1(@bufbuild/protobuf@1.10.0))(@buf/cosmos_ibc.connectrpc_es@1.4.0-20240703151202-d7191877c701.3(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0)))(@buf/penumbra-zone_penumbra.bufbuild_es@1.10.0-20240703080008-312294d02bf9.1(@bufbuild/protobuf@1.10.0))(@buf/penumbra-zone_penumbra.connectrpc_es@1.4.0-20240703080008-312294d02bf9.3(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0)))(@bufbuild/protobuf@1.10.0))(@penumbra-zone/transport-dom@7.4.0)
+        specifier: file:../web/packages/client/penumbra-zone-client-15.0.0.tgz
+        version: file:../web/packages/client/penumbra-zone-client-15.0.0.tgz(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0))(@penumbra-zone/protobuf@5.4.0(@buf/cosmos_ibc.bufbuild_es@1.10.0-20240703151202-d7191877c701.1(@bufbuild/protobuf@1.10.0))(@buf/cosmos_ibc.connectrpc_es@1.4.0-20240703151202-d7191877c701.3(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0)))(@buf/penumbra-zone_penumbra.bufbuild_es@1.10.0-20240703080008-312294d02bf9.1(@bufbuild/protobuf@1.10.0))(@buf/penumbra-zone_penumbra.connectrpc_es@1.4.0-20240703080008-312294d02bf9.3(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0)))(@bufbuild/protobuf@1.10.0))(@penumbra-zone/transport-dom@7.4.0)
       '@penumbra-zone/getters':
         specifier: ^11.0.0
         version: 11.0.0(@buf/penumbra-zone_penumbra.bufbuild_es@1.10.0-20240703080008-312294d02bf9.1(@bufbuild/protobuf@1.10.0))(@bufbuild/protobuf@1.10.0)(@penumbra-zone/bech32m@6.1.1)(@penumbra-zone/protobuf@5.4.0(@buf/cosmos_ibc.bufbuild_es@1.10.0-20240703151202-d7191877c701.1(@bufbuild/protobuf@1.10.0))(@buf/cosmos_ibc.connectrpc_es@1.4.0-20240703151202-d7191877c701.3(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0)))(@buf/penumbra-zone_penumbra.bufbuild_es@1.10.0-20240703080008-312294d02bf9.1(@bufbuild/protobuf@1.10.0))(@buf/penumbra-zone_penumbra.connectrpc_es@1.4.0-20240703080008-312294d02bf9.3(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0)))(@bufbuild/protobuf@1.10.0))
@@ -398,12 +398,12 @@ packages:
   '@penumbra-zone/bech32m@6.1.1':
     resolution: {integrity: sha512-LlN7P66kmH7e/jvTUppw3au4eh9ib1t4ejKZDRmHO9KvTm61E1aiGRt8x6wwWsOkgQ6t89H5s4VhNBjWgx1P1A==}
 
-  '@penumbra-zone/client@file:../web/packages/client/penumbra-zone-client-14.0.0.tgz':
-    resolution: {integrity: sha512-9PIyu4o+cZxyqfbJb/6DmIAYr2IIGFIcgdz7wSy6FGT1UEy2sr5gOEayd7PimOS5r7fC1b6M0mcZoXv5xGoacg==, tarball: file:../web/packages/client/penumbra-zone-client-14.0.0.tgz}
-    version: 14.0.0
+  '@penumbra-zone/client@file:../web/packages/client/penumbra-zone-client-15.0.0.tgz':
+    resolution: {integrity: sha512-U2IDTnXU2H+NLxja8sxe9focB8vi/LBwVB4KichEFn4ses6+1Svfmu8Ts2ErqGH0bshWc3gWJHY3hIq5vmxsSg==, tarball: file:../web/packages/client/penumbra-zone-client-15.0.0.tgz}
+    version: 15.0.0
     peerDependencies:
       '@connectrpc/connect': ^1.4.0
-      '@penumbra-zone/protobuf': 5.5.0
+      '@penumbra-zone/protobuf': 5.6.0
       '@penumbra-zone/transport-dom': 7.4.0
 
   '@penumbra-zone/getters@11.0.0':
@@ -2157,7 +2157,7 @@ snapshots:
     dependencies:
       bech32: 2.0.0
 
-  '@penumbra-zone/client@file:../web/packages/client/penumbra-zone-client-14.0.0.tgz(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0))(@penumbra-zone/protobuf@5.4.0(@buf/cosmos_ibc.bufbuild_es@1.10.0-20240703151202-d7191877c701.1(@bufbuild/protobuf@1.10.0))(@buf/cosmos_ibc.connectrpc_es@1.4.0-20240703151202-d7191877c701.3(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0)))(@buf/penumbra-zone_penumbra.bufbuild_es@1.10.0-20240703080008-312294d02bf9.1(@bufbuild/protobuf@1.10.0))(@buf/penumbra-zone_penumbra.connectrpc_es@1.4.0-20240703080008-312294d02bf9.3(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0)))(@bufbuild/protobuf@1.10.0))(@penumbra-zone/transport-dom@7.4.0)':
+  '@penumbra-zone/client@file:../web/packages/client/penumbra-zone-client-15.0.0.tgz(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0))(@penumbra-zone/protobuf@5.4.0(@buf/cosmos_ibc.bufbuild_es@1.10.0-20240703151202-d7191877c701.1(@bufbuild/protobuf@1.10.0))(@buf/cosmos_ibc.connectrpc_es@1.4.0-20240703151202-d7191877c701.3(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0)))(@buf/penumbra-zone_penumbra.bufbuild_es@1.10.0-20240703080008-312294d02bf9.1(@bufbuild/protobuf@1.10.0))(@buf/penumbra-zone_penumbra.connectrpc_es@1.4.0-20240703080008-312294d02bf9.3(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0)))(@bufbuild/protobuf@1.10.0))(@penumbra-zone/transport-dom@7.4.0)':
     dependencies:
       '@connectrpc/connect': 1.4.0(@bufbuild/protobuf@1.10.0)
       '@penumbra-zone/protobuf': 5.4.0(@buf/cosmos_ibc.bufbuild_es@1.10.0-20240703151202-d7191877c701.1(@bufbuild/protobuf@1.10.0))(@buf/cosmos_ibc.connectrpc_es@1.4.0-20240703151202-d7191877c701.3(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0)))(@buf/penumbra-zone_penumbra.bufbuild_es@1.10.0-20240703080008-312294d02bf9.1(@bufbuild/protobuf@1.10.0))(@buf/penumbra-zone_penumbra.connectrpc_es@1.4.0-20240703080008-312294d02bf9.3(@bufbuild/protobuf@1.10.0)(@connectrpc/connect@1.4.0(@bufbuild/protobuf@1.10.0)))(@bufbuild/protobuf@1.10.0)

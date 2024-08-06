@@ -35,6 +35,7 @@ export const useConnect = () => {
 
   // Monitors the connection
   useEffect(() => {
+    client.reconnect().catch(() => {});
     client.onConnectionChange((event) => {
       if (event.connected) {
         setConnected(event.origin);
@@ -67,6 +68,8 @@ export const useConnect = () => {
     if (!client.isConnected()) return;
     try {
       await client.disconnect();
+      setConnected(undefined);
+      window.location.reload();
     } catch (error) {
       console.error(error);
     }
