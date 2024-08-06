@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
-import { type PenumbraManifest } from '@penumbra-zone/client/manifest';
-import { PenumbraRequestFailure } from '@penumbra-zone/client/error';
-import { getAllPenumbraManifests } from '@penumbra-zone/client/get';
+import { getAllPenumbraManifests, PenumbraRequestFailure, PenumbraManifest} from '@penumbra-zone/client';
 import { client } from './penumbra';
 
 // Common react api for fetching wallet data to render the list of injected wallets
