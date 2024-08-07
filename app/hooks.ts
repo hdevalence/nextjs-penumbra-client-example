@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAllPenumbraManifests, PenumbraRequestFailure, PenumbraManifest} from '@penumbra-zone/client';
+import { PenumbraRequestFailure, PenumbraManifest } from '@penumbra-zone/client';
 import { client } from './penumbra';
 
 // Common react api for fetching wallet data to render the list of injected wallets
@@ -9,7 +9,7 @@ export const useWalletManifests = () => {
 
   const loadManifests = async () => {
     setLoading(true);
-    const res = getAllPenumbraManifests();
+    const res = client.getProviderManifests();
     const resolvedManifests = await Promise.all(
       Object.entries(res).map(async ([key, promise]) => {
         const value = await promise;
@@ -31,17 +31,17 @@ export const useConnect = () => {
   const [connectionLoading, setConnectionLoading] = useState<boolean>(false);
   const [connected, setConnected] = useState<string>();
 
-  // Monitors the connection
-  useEffect(() => {
-    client.reconnect().catch(() => {});
-    client.onConnectionChange((event) => {
-      if (event.connected) {
-        setConnected(event.origin);
-      } else {
-        setConnected(undefined);
-      }
-    });
-  }, []);
+  const reconnect = async () => {
+    const providers = client.getProviders();
+    const connected = providers.find((origin) => client.getProviderIsConnected(origin));
+    if (!connected) return;
+    try {
+      await client.connect(connected);
+      setConnected(connected);
+    } catch (error) {
+      /* no-op */
+    }
+  };
 
   const onConnect = async (origin: string) => {
     try {
@@ -69,6 +69,19 @@ export const useConnect = () => {
       console.error(error);
     }
   };
+
+  // Monitors the connection
+  useEffect(() => {
+    // If Prax is connected on page load, reconnect to ensure the connection is still active
+    reconnect();
+    client.onConnectionChange((event) => {
+      if (event.connected) {
+        setConnected(event.origin);
+      } else {
+        setConnected(undefined);
+      }
+    });
+  }, []);
 
   return {
     connectionLoading,
