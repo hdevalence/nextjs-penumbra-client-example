@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { PenumbraRequestFailure, PenumbraManifest } from '@penumbra-zone/client';
+import { PenumbraRequestFailure, PenumbraManifest, PenumbraClient, PenumbraState } from '@penumbra-zone/client';
 import { client } from './penumbra';
 
 // Common react api for fetching wallet data to render the list of injected wallets
@@ -9,7 +9,7 @@ export const useWalletManifests = () => {
 
   const loadManifests = async () => {
     setLoading(true);
-    const res = client.getProviderManifests();
+    const res = PenumbraClient.getProviderManifests();
     const resolvedManifests = await Promise.all(
       Object.entries(res).map(async ([key, promise]) => {
         const value = await promise;
@@ -32,8 +32,8 @@ export const useConnect = () => {
   const [connected, setConnected] = useState<string>();
 
   const reconnect = async () => {
-    const providers = client.getProviders();
-    const connected = providers.find((origin) => client.getProviderIsConnected(origin));
+    const providers = PenumbraClient.getProviders();
+    const connected = Object.keys(providers).find((origin) => PenumbraClient.isProviderConnected(origin));
     if (!connected) return;
     try {
       await client.connect(connected);
@@ -62,7 +62,7 @@ export const useConnect = () => {
   };
 
   const onDisconnect = async () => {
-    if (!client.isConnected()) return;
+    if (!client.connected) return;
     try {
       await client.disconnect();
     } catch (error) {
@@ -74,8 +74,8 @@ export const useConnect = () => {
   useEffect(() => {
     // If Prax is connected on page load, reconnect to ensure the connection is still active
     reconnect();
-    client.onConnectionChange((event) => {
-      if (event.connected) {
+    client.onConnectionStateChange((event) => {
+      if (event.state === PenumbraState.Connected) {
         setConnected(event.origin);
       } else {
         setConnected(undefined);
