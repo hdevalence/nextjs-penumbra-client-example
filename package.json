@@ -15,23 +15,23 @@
     "@buf/penumbra-zone_penumbra.connectrpc_es": "1.4.0-20240703080008-312294d02bf9.3",
     "@connectrpc/connect": "^1.4.0",
     "@penumbra-zone/bech32m": "^6.1.1",
-    "@penumbra-zone/client": "file:../web/packages/client/penumbra-zone-client-16.0.0.tgz",
-    "@penumbra-zone/getters": "^11.0.0",
-    "@penumbra-zone/protobuf": "^5.4.0",
-    "@penumbra-zone/transport-dom": "^7.4.0",
-    "@penumbra-zone/types": "^15.1.1",
+    "@penumbra-zone/client": "^17.0.0",
+    "@penumbra-zone/getters": "^14.0.0",
+    "@penumbra-zone/protobuf": "^5.7.0",
+    "@penumbra-zone/transport-dom": "^7.5.0",
+    "@penumbra-zone/types": "^19.0.0",
     "next": "14.2.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@types/node": "^20.14.11",
+    "@types/node": "^20.14.14",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.3",
-    "postcss": "^8.4.39",
-    "tailwindcss": "^3.4.6",
-    "typescript": "^5.5.3"
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.9",
+    "typescript": "^5.5.4"
   }
 }
