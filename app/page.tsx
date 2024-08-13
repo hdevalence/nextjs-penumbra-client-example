@@ -1,5 +1,5 @@
 'use client';
-import { useConnect, useWalletManifests } from '@/app/wrappers';
+import { useConnect, useWalletManifests } from '@/app/hooks';
 import { useInfo } from '@/app/fetchers';
 
 export default function Home() {
