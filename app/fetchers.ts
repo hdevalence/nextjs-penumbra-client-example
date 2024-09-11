@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { BalancesResponse } from '@penumbra-zone/protobuf/penumbra/view/v1/view_pb';
 import { ViewService } from '@penumbra-zone/protobuf';
-import { getAmount, getMetadataFromBalancesResponseOptional } from '@penumbra-zone/getters/balances-response';
+import { getAmount, getMetadataFromBalancesResponse } from '@penumbra-zone/getters/balances-response';
 import { client } from './penumbra';
 import { AddressView } from '@penumbra-zone/protobuf/penumbra/core/keys/v1/keys_pb';
 
@@ -26,7 +26,7 @@ export const fetchBalances = async (account: number): Promise<BalancesResponse[]
   const balances = await Array.fromAsync(iterable);
 
   return balances.filter((balance) => {
-    const metadata = getMetadataFromBalancesResponseOptional(balance);
+    const metadata = getMetadataFromBalancesResponse.optional(balance);
     const metadataSymbol = metadata?.symbol;
     const amount = getAmount(balance);
 
