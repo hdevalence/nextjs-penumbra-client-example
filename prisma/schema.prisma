@@ -1,0 +1,281 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model block_details {
+  height    BigInt   @id
+  root      Bytes
+  timestamp DateTime @db.Timestamptz(6)
+}
+
+model dex_arb {
+  height                                   BigInt                @id
+  input                                    Unsupported("value")?
+  output                                   Unsupported("value")?
+  trace_start                              Int?
+  trace_end                                Int?
+  dex_trace_dex_arb_trace_endTodex_trace   dex_trace?            @relation("dex_arb_trace_endTodex_trace", fields: [trace_end], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  dex_trace_dex_arb_trace_startTodex_trace dex_trace?            @relation("dex_arb_trace_startTodex_trace", fields: [trace_start], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model dex_batch_swap {
+  id                                                Int        @id @default(autoincrement())
+  height                                            BigInt
+  trace12_start                                     Int?
+  trace12_end                                       Int?
+  trace21_start                                     Int?
+  trace21_end                                       Int?
+  asset1                                            Bytes
+  asset2                                            Bytes
+  unfilled1                                         Decimal    @db.Decimal(39, 0)
+  unfilled2                                         Decimal    @db.Decimal(39, 0)
+  delta1                                            Decimal    @db.Decimal(39, 0)
+  delta2                                            Decimal    @db.Decimal(39, 0)
+  lambda1                                           Decimal    @db.Decimal(39, 0)
+  lambda2                                           Decimal    @db.Decimal(39, 0)
+  dex_trace_dex_batch_swap_trace12_endTodex_trace   dex_trace? @relation("dex_batch_swap_trace12_endTodex_trace", fields: [trace12_end], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  dex_trace_dex_batch_swap_trace12_startTodex_trace dex_trace? @relation("dex_batch_swap_trace12_startTodex_trace", fields: [trace12_start], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  dex_trace_dex_batch_swap_trace21_endTodex_trace   dex_trace? @relation("dex_batch_swap_trace21_endTodex_trace", fields: [trace21_end], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  dex_trace_dex_batch_swap_trace21_startTodex_trace dex_trace? @relation("dex_batch_swap_trace21_startTodex_trace", fields: [trace21_start], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([asset1, height])
+  @@index([asset2, height])
+  @@index([height])
+}
+
+model dex_lp {
+  id            Bytes    @id
+  state         String
+  asset1        Bytes
+  asset2        Bytes
+  p             Decimal  @db.Decimal(39, 0)
+  q             Decimal  @db.Decimal(39, 0)
+  fee_bps       Int?
+  price12       Decimal? @default(dbgenerated("(((1)::numeric - ((fee_bps)::numeric / (10000)::numeric)) * ((p)::numeric / (q)::numeric))")) @db.Decimal
+  price21       Decimal? @default(dbgenerated("(((1)::numeric - ((fee_bps)::numeric / (10000)::numeric)) * ((q)::numeric / (p)::numeric))")) @db.Decimal
+  close_on_fill Boolean
+  reserves1     Decimal  @db.Decimal(39, 0)
+  reserves2     Decimal  @db.Decimal(39, 0)
+
+  @@index([asset1, price12])
+  @@index([asset2, price21])
+}
+
+model dex_lp_execution {
+  id            Int     @id @default(autoincrement())
+  inflow1       Decimal @db.Decimal(39, 0)
+  inflow2       Decimal @db.Decimal(39, 0)
+  context_start Bytes
+  context_end   Bytes
+}
+
+model dex_lp_update {
+  id           Int      @id @default(autoincrement())
+  height       BigInt
+  position_id  Bytes
+  state        String
+  reserves1    Decimal? @db.Decimal(39, 0)
+  reserves2    Decimal? @db.Decimal(39, 0)
+  execution_id Int?
+
+  @@index([execution_id])
+  @@index([position_id, height(sort: Desc), id(sort: Desc)])
+}
+
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model dex_swap {
+  id     Int                   @id @default(autoincrement())
+  height BigInt
+  value1 Unsupported("value")?
+  value2 Unsupported("value")?
+
+  @@index([height, id])
+}
+
+model dex_trace {
+  id                                                     Int              @id @default(autoincrement())
+  step_start                                             Int?
+  step_end                                               Int?
+  dex_arb_dex_arb_trace_endTodex_trace                   dex_arb[]        @relation("dex_arb_trace_endTodex_trace")
+  dex_arb_dex_arb_trace_startTodex_trace                 dex_arb[]        @relation("dex_arb_trace_startTodex_trace")
+  dex_batch_swap_dex_batch_swap_trace12_endTodex_trace   dex_batch_swap[] @relation("dex_batch_swap_trace12_endTodex_trace")
+  dex_batch_swap_dex_batch_swap_trace12_startTodex_trace dex_batch_swap[] @relation("dex_batch_swap_trace12_startTodex_trace")
+  dex_batch_swap_dex_batch_swap_trace21_endTodex_trace   dex_batch_swap[] @relation("dex_batch_swap_trace21_endTodex_trace")
+  dex_batch_swap_dex_batch_swap_trace21_startTodex_trace dex_batch_swap[] @relation("dex_batch_swap_trace21_startTodex_trace")
+  dex_trace_step_dex_trace_step_endTodex_trace_step      dex_trace_step?  @relation("dex_trace_step_endTodex_trace_step", fields: [step_end], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  dex_trace_step_dex_trace_step_startTodex_trace_step    dex_trace_step?  @relation("dex_trace_step_startTodex_trace_step", fields: [step_start], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model dex_trace_step {
+  id                                             Int                   @id @default(autoincrement())
+  value                                          Unsupported("value")?
+  dex_trace_dex_trace_step_endTodex_trace_step   dex_trace[]           @relation("dex_trace_step_endTodex_trace_step")
+  dex_trace_dex_trace_step_startTodex_trace_step dex_trace[]           @relation("dex_trace_step_startTodex_trace_step")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model dex_value_circuit_breaker_change {
+  asset_id Bytes
+  flow     Decimal @db.Decimal(39, 0)
+
+  @@ignore
+}
+
+model governance_delegator_votes {
+  id                   Int                  @id @default(autoincrement())
+  proposal_id          Int
+  identity_key         String
+  vote                 Json
+  voting_power         BigInt
+  block_height         BigInt
+  governance_proposals governance_proposals @relation(fields: [proposal_id], references: [proposal_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([block_height], map: "idx_governance_delegator_votes_block_height")
+  @@index([identity_key], map: "idx_governance_delegator_votes_identity_key")
+  @@index([proposal_id], map: "idx_governance_delegator_votes_proposal_id")
+  @@index([vote], map: "idx_governance_delegator_votes_vote")
+  @@index([voting_power], map: "idx_governance_delegator_votes_voting_power")
+}
+
+model governance_proposals {
+  id                         Int                          @id @default(autoincrement())
+  proposal_id                Int                          @unique
+  title                      String
+  description                String
+  kind                       Json
+  payload                    Json?
+  start_block_height         BigInt
+  end_block_height           BigInt
+  state                      Json
+  proposal_deposit_amount    BigInt
+  withdrawn                  Boolean?                     @default(false)
+  withdrawal_reason          String?
+  governance_delegator_votes governance_delegator_votes[]
+  governance_validator_votes governance_validator_votes[]
+
+  @@index([end_block_height(sort: Desc)], map: "idx_governance_proposals_end_block_height")
+  @@index([proposal_id], map: "idx_governance_proposals_id")
+  @@index([kind], map: "idx_governance_proposals_kind")
+  @@index([start_block_height(sort: Desc)], map: "idx_governance_proposals_start_block_height")
+  @@index([state], map: "idx_governance_proposals_state")
+  @@index([title], map: "idx_governance_proposals_title")
+  @@index([withdrawn], map: "idx_governance_proposals_withdrawn")
+}
+
+model governance_validator_votes {
+  id                   Int                  @id @default(autoincrement())
+  proposal_id          Int
+  identity_key         String
+  vote                 Json
+  voting_power         BigInt
+  block_height         BigInt
+  governance_proposals governance_proposals @relation(fields: [proposal_id], references: [proposal_id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([block_height], map: "idx_governance_validator_votes_block_height")
+  @@index([identity_key], map: "idx_governance_validator_votes_identity_key")
+  @@index([proposal_id], map: "idx_governance_validator_votes_proposal_id")
+  @@index([vote], map: "idx_governance_validator_votes_vote")
+  @@index([voting_power], map: "idx_governance_validator_votes_voting_power")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model ibc_transfer {
+  id            Int     @id @default(autoincrement())
+  asset         Bytes
+  amount        Decimal @db.Decimal(39, 0)
+  penumbra_addr Bytes
+  foreign_addr  String
+  kind          String
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model index_watermark {
+  events_rowid BigInt
+
+  @@ignore
+}
+
+model shielded_pool_fmd_clue_set {
+  id         Int   @id @default(autoincrement())
+  clue_bytes Bytes
+  tx_hash    Bytes
+}
+
+model stake_delegation_txs {
+  id      Int    @id @default(autoincrement())
+  ik      String
+  amount  BigInt
+  height  BigInt
+  tx_hash Bytes
+
+  @@index([height(sort: Desc)], map: "idx_stake_delegation_txs_height")
+  @@index([ik], map: "idx_stake_delegation_txs_ik")
+  @@index([ik, height(sort: Desc)], map: "idx_stake_delegation_txs_validator_ik_height")
+}
+
+model stake_slashings {
+  id          Int    @id @default(autoincrement())
+  height      BigInt
+  ik          String
+  epoch_index BigInt
+  penalty     String
+
+  @@index([height], map: "idx_stake_slashings_height")
+  @@index([height, ik], map: "idx_stake_slashings_height_ik")
+  @@index([ik], map: "idx_stake_slashings_ik")
+}
+
+model stake_undelegation_txs {
+  id      Int    @id @default(autoincrement())
+  ik      String
+  amount  BigInt
+  height  BigInt
+  tx_hash Bytes
+
+  @@index([height(sort: Desc)], map: "idx_stake_undelegation_txs_height")
+  @@index([ik], map: "idx_stake_undelegation_txs_ik")
+  @@index([ik, height(sort: Desc)], map: "idx_stake_undelegation_txs_ik_height")
+}
+
+model stake_validator_set {
+  id                   Int    @id @default(autoincrement())
+  ik                   String @unique(map: "idx_stake_validator_set_ik")
+  name                 String
+  definition           String
+  voting_power         BigInt
+  queued_delegations   BigInt
+  queued_undelegations BigInt
+  validator_state      String
+  bonding_state        String
+}
+
+model supply_total_staked {
+  validator_id      Int
+  height            BigInt
+  um                BigInt
+  del_um            BigInt
+  rate_bps2         BigInt
+  supply_validators supply_validators @relation(fields: [validator_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([validator_id, height])
+}
+
+model supply_total_unstaked {
+  height  BigInt @id
+  um      BigInt
+  auction BigInt
+  dex     BigInt
+  arb     BigInt
+  fees    BigInt
+}
+
+model supply_validators {
+  id                  Int                   @id @default(autoincrement())
+  identity_key        String
+  supply_total_staked supply_total_staked[]
+}

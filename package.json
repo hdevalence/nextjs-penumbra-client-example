@@ -17,6 +17,7 @@
     "@penumbra-zone/transport-dom": "^7.5.0",
     "@penumbra-zone/types": "^23.0.0",
     "@penumbra-zone/ui": "^9.1.1",
+    "@prisma/client": "5.20.0",
     "next": "14.2.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -28,6 +29,7 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.3",
     "postcss": "^8.4.45",
+    "prisma": "^5.20.0",
     "tailwindcss": "^3.4.10",
     "typescript": "^5.6.2"
   }
